@@ -33,8 +33,14 @@ I imported React icons and framer motion for this purpose.
 This project was created as part of **Test 1 - Part 2** for my Web Development course.  
 The objective was to reuse the Discussion Board code and add **Like/Dislike functionality**.
 
+## This is how you can access my "board" webpage
+1.Connect to: http://localhost:5173/register (it is necessary)
+2. After that, fill out the Registration form (without this, you cannot approach)
+3.	Fill out the Login page : http://localhost:5173/login
+4.	Then you will see our Discussion board:  http://localhost:5173/board 
+     -- where you will see your (username) (that you entered during "registeration") with welcome and as well as whenever you click on like or dislike  radio button.
 
-## 🚀 Features
+##  Features
 - Signup and Login with MongoDB
 - Discussion Board with sample posts
 - Each post has:
