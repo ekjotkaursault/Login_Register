@@ -1,47 +1,45 @@
-// Import useState hook for managing form inputs
+// Import React hooks and libraries
 import { useState } from "react";
-
-// Import Link for navigation and useNavigate for redirecting after signup
-import { Link, useNavigate } from "react-router-dom";
-
-// Import axios to make API requests to the backend
-import axios from "axios";
-
-// Import icons for Name, Email, and Password fields
-import { FaUser, FaEnvelope, FaLock } from "react-icons/fa";
-
-// Import motion for smooth animations
-import { motion } from "framer-motion";
+import { Link, useNavigate } from "react-router-dom";  // navigation and links
+import axios from "axios";  // for API calls
+import { FaUser, FaEnvelope, FaLock } from "react-icons/fa"; // icons for inputs
+import { motion } from "framer-motion"; // animation
 
 function Signup() {
-  // State to store form data
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+// Local states for form inputs and messages
 
-  // State for success/error messages
-  const [message, setMessage] = useState("");
-
-  // Hook to redirect user after signup
-  const navigate = useNavigate();
+  const [name, setName] = useState(""); // username
+  const [email, setEmail] = useState(""); // email
+  const [password, setPassword] = useState(""); // password
+  const [message, setMessage] = useState(""); //success/error messages
+  const navigate = useNavigate(); // for programmatic navigation
 
   // Handle form submission
-  const handleSubmit = (e) => {
-    e.preventDefault(); // prevent page reload
-    setMessage("");     // clear old message
 
-    // Send data to backend for registration
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    setMessage("");   
+
+    // send request to backend for registration
     axios.post("http://localhost:3001/register", { name, email, password })
       .then((result) => {
-        setMessage(result.data.message); // show backend message
+        setMessage(result.data.message);
 
-        // If signup is successful, redirect to Login page
+          // If registration is successful, redirect to login after 1.5s
         if (result.data.message === "User registered successfully") {
           setTimeout(() => navigate("/login"), 1500);
         }
+
+        // Save username in localStorage (for display later) 
+        if (result.data.user) {
+  localStorage.setItem("username", result.data.user.name);
+}
+
+
       })
       .catch((err) => {
-        // Show error message if backend sends one
+
+        // Handle backend or network errors
         if (err.response && err.response.data.message) {
           setMessage("❌ " + err.response.data.message);
         } else {
@@ -51,12 +49,11 @@ function Signup() {
   };
 
   return (
-    // Center the signup form on the page
-    <div 
-      className="d-flex justify-content-center align-items-center vh-100"
-      style={{ background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)" }}
-    >
-      {/* Add motion for fade-in animation */}
+    <div className="d-flex justify-content-center align-items-center vh-100"
+         style={{ background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)" }}>
+     
+      {/* Signup box with animation */}
+
       <motion.div 
         initial={{ opacity: 0, y: -50 }}
         animate={{ opacity: 1, y: 0 }}
@@ -66,58 +63,78 @@ function Signup() {
       >
         <h2 className="text-center mb-4">✨ Register</h2>
 
-        {/* Signup form */}
+    {/* Signup Form */}
         <form onSubmit={handleSubmit}>
-          {/* Name field */}
+          {/* Name */}
           <div className="mb-3">
             <label><strong>Name</strong></label>
             <div className="input-group">
               <span className="input-group-text"><FaUser /></span>
-              <input type="text" className="form-control"
-                placeholder="Enter Name" value={name}
-                onChange={(e) => setName(e.target.value)} required />
+              <input 
+                type="text" 
+                className="form-control"
+                placeholder="Enter Name" 
+                value={name}
+                onChange={(e) => setName(e.target.value)} 
+                required 
+              />
             </div>
           </div>
 
-          {/* Email field */}
+          {/* Email input */}
           <div className="mb-3">
             <label><strong>Email</strong></label>
             <div className="input-group">
               <span className="input-group-text"><FaEnvelope /></span>
-              <input type="email" className="form-control"
-                placeholder="Enter Email" value={email}
-                onChange={(e) => setEmail(e.target.value)} required />
+              <input 
+                type="email" 
+                className="form-control"
+                placeholder="Enter Email" 
+                value={email}
+                onChange={(e) => setEmail(e.target.value)} 
+                required 
+              />
             </div>
           </div>
 
-          {/* Password field */}
+          {/* Password */}
           <div className="mb-3">
             <label><strong>Password</strong></label>
             <div className="input-group">
               <span className="input-group-text"><FaLock /></span>
-              <input type="password" className="form-control"
-                placeholder="Enter Password" value={password}
-                onChange={(e) => setPassword(e.target.value)} required />
+              <input 
+                type="password" 
+                className="form-control"
+                placeholder="Enter Password" 
+                value={password}
+                onChange={(e) => setPassword(e.target.value)} 
+                required 
+              />
             </div>
           </div>
 
+
           {/* Submit button */}
-          <button type="submit" 
+          <button 
+            type="submit" 
             className="btn w-100"
-            style={{ background: "linear-gradient(90deg, #667eea, #764ba2)", color: "white" }}>
+            style={{ background: "linear-gradient(90deg, #667eea, #764ba2)", color: "white" }}
+          >
             Register
           </button>
         </form>
 
-        {/* Show success or error message */}
+
+        {/* Display success/error message */}
         {message && (
           <div className={`alert mt-3 ${message.includes("✅") || message.includes("successfully") 
-              ? "alert-success" : "alert-danger"}`}>
+            ? "alert-success" : "alert-danger"}`}>
             {message}
           </div>
         )}
 
-        {/* Links to go back to Login */}
+
+        {/* Link to login page */}
         <p className="mt-3 text-center">
           Already have an account?{" "}
           <Link to="/login" className="text-decoration-none fw-bold" style={{ color: "#667eea" }}>
@@ -125,6 +142,7 @@ function Signup() {
           </Link>
         </p>
 
+          {/* Button to navigate to login page */}
         <Link to="/login" className="btn btn-light border w-100 mt-2">Login</Link>
       </motion.div>
     </div>

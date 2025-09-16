@@ -1,17 +1,20 @@
-// Import mongoose to work with MongoDB
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
-// Define a schema (structure) for the Employee collection
-// Each employee will have a name, email, and password
+// Define the schema (structure) for our employees collection
 const EmployeeSchema = new mongoose.Schema({
-  name: String,     // store employee's name
-  email: String,    // store employee's email address
-  password: String, // store employee's password
+  // Username of the employee (required)
+  name: { type: String, required: true },   // this is the username
+
+  // Email must be unique so no duplicate accounts
+  email: { type: String, required: true, unique: true },
+
+  // Password is also required
+  password: { type: String, required: true }
 });
 
-// Create a model based on the schema
-// 'employees' will be the collection name in MongoDB
-const EmployeeModel = mongoose.model('employees', EmployeeSchema);
+// Create a model called "employees" using the schema
+// This will map to the "employees" collection in MongoDB
+const EmployeeModel = mongoose.model("employees", EmployeeSchema);
 
-// Export the model so it can be used in other files
+// Export the model so other files (like server routes) can use it
 module.exports = EmployeeModel;

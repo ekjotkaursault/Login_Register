@@ -1,29 +1,29 @@
-// importing Bootsrap CSS for styling
+// Import Bootstrap for styling
 import 'bootstrap/dist/css/bootstrap.min.css';
-// importing necessary modules from react-router-dom for routing
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+// Import routing tools from React Router
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 
-//importing Signup and Login components for respective routes
-import Signup from './Signup';
-import Login from './Login';
+// Import our components (pages)
+import Signup from "./Signup";
+import Login from "./Login";
+import DiscussionBoard from "./DiscussionBoard"; // ✅ import it
 
-
-//This is main app component which handles routing between Signup and Login components
 function App() {
   return (
 
-    //BrowserRouter is used to wrap the entire application to enable routing
+    // BrowserRouter enables routing inside our React app
     <BrowserRouter>
       <Routes>
-        {/* Default route → redirect to /register */}
-        <Route path="/" element={<Navigate to="/register" />} />
+        <Route path="/" element={<Navigate to="/register" />} /> {/* If someone opens the base URL "/", send them to /register */}
+        <Route path="/register" element={<Signup />} />  {/* Signup page */}
+        <Route path="/login" element={<Login />} />    {/* Login page */}
         
-        <Route path="/register" element={<Signup />} />
-        <Route path="/login" element={<Login />} />
+         {/* Discussion board page */}
+        <Route path="/board" element={<DiscussionBoard />} />   {/* ✅ new route */}
       </Routes>
     </BrowserRouter>
   );
 }
 
-//Exporting app so it can be used in main.jsx
+// Export App so it can be used in index.js
 export default App;

@@ -1,53 +1,72 @@
-//import UseState for state management
-import { useState } from "react";
-//import Link for navigation between routes
-import { Link } from "react-router-dom";
-//import axios for making HTTP requests
+// Import React hooks and libraries
+import { useState, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
-//importing icons from react-icons for better UI
 import { FaEnvelope, FaLock } from "react-icons/fa";
-//importing motion from framer-motion for animations
 import { motion } from "framer-motion";
 
 function Login() {
-  // These are states to hold form data and messages
+  // States for form and messages
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [remember, setRemember] = useState(false); // checkbox state
+  const [remember, setRemember] = useState(false);
   const [message, setMessage] = useState("");
+  const navigate = useNavigate();
 
-  //handle form submission when user clicks login button
+  // Load saved email if it exists
+  useEffect(() => {
+    const savedEmail = localStorage.getItem("savedEmail");
+    if (savedEmail) {
+      setEmail(savedEmail);
+      setRemember(true);
+    }
+  }, []);
+
+  // Handle login form submit
   const handleSubmit = (e) => {
     e.preventDefault();
     setMessage("");
 
-    //Send login data to backend API
-    axios.post("http://localhost:3001/login", { 
-      email: email.trim().toLowerCase(), 
-      password: password.trim(),
-      rememberMe: remember  // send to backend if needed
-    })
+    // Send login request to backend 
+    axios
+      .post("http://localhost:3001/login", {
+        email: email.trim().toLowerCase(),
+        password: password.trim(),
+        rememberMe: remember,
+      })
       .then((result) => {
         if (result.data.message === "Login successful") {
           setMessage("✅ Login successful!");
-          
-          // Save email to localStorage if checked
+
+       
+  
+
+          //  Save email if remember checked
           if (remember) {
             localStorage.setItem("savedEmail", email);
           } else {
             localStorage.removeItem("savedEmail");
           }
 
-          // Redirect to GitHub after a short delay
+          //  Save username and email for later use
+          if (result.data.user) {
+            console.log("User received from backend:", result.data.user); // ✅ debug
+            localStorage.setItem("username", result.data.user.name);
+            localStorage.setItem("userEmail", result.data.user.email);
+          }
+
+          // Redirect to /board
           setTimeout(() => {
-            window.location.href = "https://github.com/ekjotkaursault";
-          }, 1200);
+            navigate("/board");
+          }, 800);
         } else {
+
+          // If backend sends error message
           setMessage(result.data.message);
         }
       })
       .catch((err) => {
-        // show error message from server or generic error
+         // Handle network or server errors
         if (err.response && err.response.data.message) {
           setMessage("❌ " + err.response.data.message);
         } else {
@@ -56,24 +75,12 @@ function Login() {
       });
   };
 
-  // Load saved email if it exists
-  useState(() => {
-    const savedEmail = localStorage.getItem("savedEmail");
-    if (savedEmail) {
-      setEmail(savedEmail);
-      setRemember(true);
-    }
-  }, []);
-
   return (
-    //container to center the login form
-    <div 
+    <div
       className="d-flex justify-content-center align-items-center vh-100"
       style={{ background: "#f0f4f8" }}
     >
-
-      {/* Animated Login form */}
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0, y: 50 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
@@ -82,72 +89,96 @@ function Login() {
       >
         <h2 className="text-center mb-4">🔑 Login</h2>
 
-        {/* Login form */}
         <form onSubmit={handleSubmit}>
+          {/* Email */}
           <div className="mb-3">
-            <label><strong>Email</strong></label>
+            <label>
+              <strong>Email</strong>
+            </label>
             <div className="input-group">
-              <span className="input-group-text"><FaEnvelope /></span>
-              <input type="email" className="form-control"
-                placeholder="Enter Email" value={email}
-                onChange={(e) => setEmail(e.target.value)} required />
+              <span className="input-group-text">
+                <FaEnvelope />
+              </span>
+              <input
+                type="email"
+                className="form-control"
+                placeholder="Enter Email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+              />
             </div>
           </div>
 
-        {/* Password input */}
+          {/* Password */}
           <div className="mb-3">
-            <label><strong>Password</strong></label>
+            <label>
+              <strong>Password</strong>
+            </label>
             <div className="input-group">
-              <span className="input-group-text"><FaLock /></span>
-              <input type="password" className="form-control"
-                placeholder="Enter Password" value={password}
-                onChange={(e) => setPassword(e.target.value)} required />
+              <span className="input-group-text">
+                <FaLock />
+              </span>
+              <input
+                type="password"
+                className="form-control"
+                placeholder="Enter Password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+              />
             </div>
           </div>
 
-          {/*  Remember Me checkbox */}
+          {/* Remember Me */}
           <div className="form-check mb-3">
-            <input 
-              type="checkbox" 
+            <input
+              type="checkbox"
               className="form-check-input"
               id="rememberMe"
               checked={remember}
-              onChange={() => setRemember(!remember)} 
+              onChange={() => setRemember(!remember)}
             />
             <label className="form-check-label" htmlFor="rememberMe">
               Remember Me
             </label>
           </div>
 
-
-           {/* Login button */}
-          <button type="submit" 
+          {/* Button */}
+          <button
+            type="submit"
             className="btn w-100"
-            style={{ background: "linear-gradient(90deg, #4facfe, #00f2fe)", color: "white" }}>
+            style={{
+              background: "linear-gradient(90deg, #4facfe, #00f2fe)",
+              color: "white",
+            }}
+          >
             Login
           </button>
         </form>
 
-         {/* Success or error message */}
-
+        {/* Message */}
         {message && (
-          <div className={`alert mt-3 ${message.includes("✅") || message.includes("successful") 
-              ? "alert-success" : "alert-danger"}`}>
+          <div
+            className={`alert mt-3 ${
+              message.includes("✅") ? "alert-success" : "alert-danger"
+            }`}
+          >
             {message}
           </div>
         )}
 
-
-          {/* Links to Register page */}
-        {/* Inline + Button links */}
+        {/* Links */}
         <p className="mt-3 text-center">
           Don’t have an account?{" "}
-          <Link to="/register" className="text-decoration-none fw-bold" style={{ color: "#4facfe" }}>
+          <Link
+            to="/register"
+            className="text-decoration-none fw-bold"
+            style={{ color: "#4facfe" }}
+          >
             Register
           </Link>
         </p>
-
-        <Link to="/register" className="btn btn-light border w-100 mt-2">Register</Link>
       </motion.div>
     </div>
   );
