@@ -22,3 +22,27 @@ I simply used them to improve the clarity and usability of messages for debuggin
 In order to make the webpage appear cleaner and more contemporary, I also employed a few fonts.  
 This was primarily done for presentational reasons, making sure that the register and login pages not only functioned but also looked good.  
 I imported React icons and framer motion for this purpose.
+
+
+
+
+### For Test 1 part 2
+
+ Discussion Board - Test 1 Part 2
+
+This project was created as part of **Test 1 - Part 2** for my Web Development course.  
+The objective was to reuse the Discussion Board code and add **Like/Dislike functionality**.
+
+
+## 🚀 Features
+- Signup and Login with MongoDB
+- Discussion Board with sample posts
+- Each post has:
+  - 👍 Like button (+1)
+  - 👎 Dislike button (-1)
+  - Count displayed between Like/Dislike
+  - User feedback (e.g., "Ekjot liked this 👍")
+- Responsive UI with Bootstrap
+- Animations using Framer Motion
+
+I also used **YouTube tutorials** for education and direction in order to gain a better understanding of how to handle MongoDB, style the components, and integrate React with backend APIs.  Beside this , if i encounter some errors like "extra bracket () or semicolon;" it was automatically suggested by vscode to correct the mistake. 
