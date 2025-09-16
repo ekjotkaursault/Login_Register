@@ -1,35 +1,44 @@
+//import UseState for state management
 import { useState } from "react";
+//import Link for navigation between routes
 import { Link } from "react-router-dom";
+//import axios for making HTTP requests
 import axios from "axios";
+//importing icons from react-icons for better UI
 import { FaEnvelope, FaLock } from "react-icons/fa";
+//importing motion from framer-motion for animations
 import { motion } from "framer-motion";
 
 function Login() {
+  // These are states to hold form data and messages
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [remember, setRemember] = useState(false); // ✅ checkbox state
+  const [remember, setRemember] = useState(false); // checkbox state
   const [message, setMessage] = useState("");
 
+  //handle form submission when user clicks login button
   const handleSubmit = (e) => {
     e.preventDefault();
     setMessage("");
 
+    //Send login data to backend API
     axios.post("http://localhost:3001/login", { 
       email: email.trim().toLowerCase(), 
       password: password.trim(),
-      rememberMe: remember  // ✅ send to backend if needed
+      rememberMe: remember  // send to backend if needed
     })
       .then((result) => {
         if (result.data.message === "Login successful") {
           setMessage("✅ Login successful!");
           
-          // ✅ Save email to localStorage if checked
+          // Save email to localStorage if checked
           if (remember) {
             localStorage.setItem("savedEmail", email);
           } else {
             localStorage.removeItem("savedEmail");
           }
 
+          // Redirect to GitHub after a short delay
           setTimeout(() => {
             window.location.href = "https://github.com/ekjotkaursault";
           }, 1200);
@@ -38,6 +47,7 @@ function Login() {
         }
       })
       .catch((err) => {
+        // show error message from server or generic error
         if (err.response && err.response.data.message) {
           setMessage("❌ " + err.response.data.message);
         } else {
@@ -46,7 +56,7 @@ function Login() {
       });
   };
 
-  // ✅ Load saved email if it exists
+  // Load saved email if it exists
   useState(() => {
     const savedEmail = localStorage.getItem("savedEmail");
     if (savedEmail) {
@@ -56,10 +66,13 @@ function Login() {
   }, []);
 
   return (
+    //container to center the login form
     <div 
       className="d-flex justify-content-center align-items-center vh-100"
       style={{ background: "#f0f4f8" }}
     >
+
+      {/* Animated Login form */}
       <motion.div 
         initial={{ opacity: 0, y: 50 }}
         animate={{ opacity: 1, y: 0 }}
@@ -68,6 +81,8 @@ function Login() {
         style={{ width: "350px" }}
       >
         <h2 className="text-center mb-4">🔑 Login</h2>
+
+        {/* Login form */}
         <form onSubmit={handleSubmit}>
           <div className="mb-3">
             <label><strong>Email</strong></label>
@@ -79,6 +94,7 @@ function Login() {
             </div>
           </div>
 
+        {/* Password input */}
           <div className="mb-3">
             <label><strong>Password</strong></label>
             <div className="input-group">
@@ -89,7 +105,7 @@ function Login() {
             </div>
           </div>
 
-          {/* ✅ Remember Me checkbox */}
+          {/*  Remember Me checkbox */}
           <div className="form-check mb-3">
             <input 
               type="checkbox" 
@@ -103,12 +119,16 @@ function Login() {
             </label>
           </div>
 
+
+           {/* Login button */}
           <button type="submit" 
             className="btn w-100"
             style={{ background: "linear-gradient(90deg, #4facfe, #00f2fe)", color: "white" }}>
             Login
           </button>
         </form>
+
+         {/* Success or error message */}
 
         {message && (
           <div className={`alert mt-3 ${message.includes("✅") || message.includes("successful") 
@@ -117,6 +137,8 @@ function Login() {
           </div>
         )}
 
+
+          {/* Links to Register page */}
         {/* Inline + Button links */}
         <p className="mt-3 text-center">
           Don’t have an account?{" "}
