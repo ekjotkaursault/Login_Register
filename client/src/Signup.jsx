@@ -1,45 +1,39 @@
 // Import React hooks and libraries
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";  // navigation and links
-import axios from "axios";  // for API calls
-import { FaUser, FaEnvelope, FaLock } from "react-icons/fa"; // icons for inputs
-import { motion } from "framer-motion"; // animation
+import { Link, useNavigate } from "react-router-dom";  
+import axios from "axios";  
+import { FaUser, FaEnvelope, FaLock } from "react-icons/fa"; 
+import { motion } from "framer-motion"; 
 
 function Signup() {
-// Local states for form inputs and messages
-
-  const [name, setName] = useState(""); // username
-  const [email, setEmail] = useState(""); // email
-  const [password, setPassword] = useState(""); // password
-  const [message, setMessage] = useState(""); //success/error messages
-  const navigate = useNavigate(); // for programmatic navigation
+  // Local states for form inputs and messages
+  const [name, setName] = useState(""); 
+  const [email, setEmail] = useState(""); 
+  const [password, setPassword] = useState(""); 
+  const [message, setMessage] = useState(""); 
+  const navigate = useNavigate(); 
 
   // Handle form submission
-
   const handleSubmit = (e) => {
     e.preventDefault();
     setMessage("");   
 
-    // send request to backend for registration
     axios.post("http://localhost:3001/register", { name, email, password })
       .then((result) => {
         setMessage(result.data.message);
 
-          // If registration is successful, redirect to login after 1.5s
-        if (result.data.message === "User registered successfully") {
+        // ✅ Flexible success check
+        if (result.data.message.toLowerCase().includes("success")) {
+          // Save username in localStorage
+          if (result.data.user) {
+            localStorage.setItem("username", result.data.user.name);
+          }
+
+          // Redirect to login after 1.5s
           setTimeout(() => navigate("/login"), 1500);
         }
-
-        // Save username in localStorage (for display later) 
-        if (result.data.user) {
-  localStorage.setItem("username", result.data.user.name);
-}
-
-
       })
       .catch((err) => {
-
-        // Handle backend or network errors
         if (err.response && err.response.data.message) {
           setMessage("❌ " + err.response.data.message);
         } else {
@@ -52,8 +46,6 @@ function Signup() {
     <div className="d-flex justify-content-center align-items-center vh-100"
          style={{ background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)" }}>
      
-      {/* Signup box with animation */}
-
       <motion.div 
         initial={{ opacity: 0, y: -50 }}
         animate={{ opacity: 1, y: 0 }}
@@ -63,7 +55,6 @@ function Signup() {
       >
         <h2 className="text-center mb-4">✨ Register</h2>
 
-    {/* Signup Form */}
         <form onSubmit={handleSubmit}>
           {/* Name */}
           <div className="mb-3">
@@ -81,7 +72,7 @@ function Signup() {
             </div>
           </div>
 
-          {/* Email input */}
+          {/* Email */}
           <div className="mb-3">
             <label><strong>Email</strong></label>
             <div className="input-group">
@@ -113,8 +104,7 @@ function Signup() {
             </div>
           </div>
 
-
-          {/* Submit button */}
+          {/* Submit */}
           <button 
             type="submit" 
             className="btn w-100"
@@ -124,17 +114,15 @@ function Signup() {
           </button>
         </form>
 
-
-        {/* Display success/error message */}
+        {/* Success/Error Message */}
         {message && (
-          <div className={`alert mt-3 ${message.includes("✅") || message.includes("successfully") 
+          <div className={`alert mt-3 ${message.toLowerCase().includes("success") 
             ? "alert-success" : "alert-danger"}`}>
             {message}
           </div>
         )}
 
-
-        {/* Link to login page */}
+        {/* Links */}
         <p className="mt-3 text-center">
           Already have an account?{" "}
           <Link to="/login" className="text-decoration-none fw-bold" style={{ color: "#667eea" }}>
@@ -142,7 +130,6 @@ function Signup() {
           </Link>
         </p>
 
-          {/* Button to navigate to login page */}
         <Link to="/login" className="btn btn-light border w-100 mt-2">Login</Link>
       </motion.div>
     </div>
